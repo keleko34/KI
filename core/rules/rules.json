@@ -1,4 +1,8 @@
 {
-  'function':'function((.*?)){(.*)};',
-  'var':'var (.*?) = (.*);'
+  'keywords':['function','var','global'],
+  'snippets':{
+    'global':'global.(.*?) = (.*);',
+    'function':'function((.*?)){(.*)};',
+    'var':'var (.*?) = (.*);'
+  }
 }
