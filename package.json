@@ -1,0 +1,33 @@
+{
+  "name": "KI",
+  "version": "0.0.1",
+  "description": "JS AI",
+  "keywords": [
+    "AI"
+  ],
+  "homepage": "https://github.com/keleko34/KI",
+  "bugs": {
+    "url": "https://github.com/keleko34/KI",
+    "email": "Gregory.Guidero@Gmail.com"
+  },
+  "license": "(MIT OR Apache-2.0)",
+  "contributors": [
+    {
+      "name": "Gregory Guidero",
+      "email": "Gregory.Guidero@Gmail.com",
+      "url": "http://keleko.io"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/keleko34/KI"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0"
+  },
+  "dependencies": {
+    "JSONStream": "^1.1.1",
+    "event-stream": "^3.3.2",
+    "stream-array": "^1.1.1"
+  }
+}
