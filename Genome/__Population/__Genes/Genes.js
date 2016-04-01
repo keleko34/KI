@@ -177,10 +177,10 @@ module.exports = (function(){
     Gene.checkMap = function()
     {
       var total = 0;
-      for (_i = 0; _i < _map.length; _i++) {
+      for (_i = 0; _i < _map.length; _i+=1) {
           total += (_map.charCodeAt(_i) - _goal.charCodeAt(_i)) * (_map.charCodeAt(_i) - _goal.charCodeAt(_i));
       }
-      _status = total; //number of mistakes this loser has.
+      _status = total; //number of mistakes.
       return Gene;
     }
 

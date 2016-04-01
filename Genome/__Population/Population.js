@@ -24,18 +24,15 @@ module.exports = (function(){
         if(_members[_i] === undefined)
         {
           _members[_i] = Genes()
-          .goal(_goal)
           .popID(_i)
+          .goal(_goal)
+          .chance(_mutationRate)
           .memoryRead(_memoryRead)
           .memoryWrite(_memoryWrite)
-          .chance(_mutationRate)
-          .randomizeMap(_goal.length)
-          .onFoundChar(function(){
-
-          });
+          .randomizeMap(_goal.length);
         }
-        //have the genes check their map
-        _members[_i].checkMap();
+          //have the genes check their map
+          _members[_i].checkMap();
       }
       //sort population by who is stronger, force them to have children and weed out the weak!
       Population.sort(); //sort by the class, only the strong survive

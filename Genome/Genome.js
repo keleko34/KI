@@ -11,9 +11,11 @@ module.exports = (function(){
       , _match = false
       , _mutation = 0.5
       , _time = null
-      , _memoryRead = fs.createReadStream('Genome/__Memory/Memory.json',{autoClose:false})
-      , _memoryWrite = fs.createWriteStream('Genome/__Memory/Memory.json',{autoClose:false})
-      , _testCount = 0;
+      , _onEnd = function(){}
+      , _memoryRead = fs.createReadStream(process.cwd().replace(/\\/g,'/')+'/Genome/__Memory/Memory.json',{autoClose:false})
+      , _memoryWrite = fs.createWriteStream(process.cwd().replace(/\\/g,'/')+'/Genome/__Memory/Memory.json',{autoClose:false})
+      , _testCount = 0
+      , _timer = new Date().getTime();
 
     _memoryRead.pipe(JSONStream.parse('*'))
 
@@ -66,7 +68,7 @@ module.exports = (function(){
         else
         {
           _isRunning = false;
-          Genome.log(_Population.members(),'Found Match!!!!!')
+          Genome.log(_Population.members(),'Found Match!!!!!');
         }
       },0);
     };
@@ -91,6 +93,16 @@ module.exports = (function(){
       return Genome;
     }
 
+    Genome.onEnd = function(v)
+    {
+      if(v === undefined)
+      {
+        return _onEnd;
+      }
+      _onEnd = (typeof v === 'function' ? v : _onEnd);
+      return Genome;
+    }
+
     Genome.isRunning = function(v)
     {
       return _isRunning;
@@ -107,17 +119,27 @@ module.exports = (function(){
     }
 
     Genome.log = function(p,m){
-      if(_testCount >= 100 || m)
+      if(_testCount >= 250 || m)
       {
-        if(m) console.log(m);
-        console.log('Generation: ',_generation);
-        for(var i=0;i<p.length;i+=1)
-        {
-          console.log('String: ',p[i].map(),' (',p[i].status(),')');
-        }
-        console.log('');
-        console.log('');
-        _testCount = 0;
+        setTimeout(function(){
+          if(m)
+          {
+            var endTime = new Date().getTime();
+            _timer = endTime - _timer;
+            var sec = Math.floor(_timer/1000);
+            var mod = (_timer % 1000);
+            console.log(m,' in ',sec.toString()+'.'+mod.toString(),' seconds');
+          }
+          console.log('Generation: ',_generation);
+          for(var i=0;i<2;i+=1)
+          {
+            console.log('String: ',p[i].map(),' (',p[i].status(),')');
+          }
+          console.log('');
+          console.log('');
+          _testCount = 0;
+        },30)
+
       }
 
     }
