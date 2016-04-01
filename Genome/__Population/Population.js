@@ -13,6 +13,8 @@ module.exports = (function(){
       , _repopulate = []
       , _i = 0
       , _mutationRate = 0.2
+      , _memoryRead = {}
+      , _memoryWrite = {}
 
     function Population()
     {
@@ -21,17 +23,30 @@ module.exports = (function(){
       {
         if(_members[_i] === undefined)
         {
-          _members[_i] = Genes().goal(_goal).chance(_mutationRate);
+          _members[_i] = Genes()
+          .goal(_goal)
+          .popID(_i)
+          .memoryRead(_memoryRead)
+          .memoryWrite(_memoryWrite)
+          .chance(_mutationRate)
+          .randomizeMap(_goal.length)
+          .onFoundChar(function(){
+
+          });
         }
         //have the genes check their map
         _members[_i].checkMap();
       }
-
       //sort population by who is stronger, force them to have children and weed out the weak!
       Population.sort(); //sort by the class, only the strong survive
       _children = _members[0].call(_members[0],_members);
       _repopulate = ([_members.length-_children.length,_children.length]).concat(_children);
       _members.splice.apply(_members,_repopulate);
+      for(_i=0;_i<_members.length;_i+=1)
+      {
+        _members[_i].checkMap();
+      }
+      Population.sort();
       if(_members[0].map() === _goal){
         _onFound();
       }
@@ -95,6 +110,26 @@ module.exports = (function(){
         return _mutationRate;
       }
       _mutationRate = (typeof v === 'number' && v <= 1 ? v : _mutationRate);
+      return Population;
+    }
+
+    Population.memoryRead = function(v)
+    {
+      if(v === undefined)
+      {
+        return _memoryRead;
+      }
+      _memoryRead = (typeof v.pipe === 'function' ? v : _memoryRead);
+      return Population;
+    }
+
+    Population.memoryWrite = function(v)
+    {
+      if(v === undefined)
+      {
+        return _memoryWrite;
+      }
+      _memoryWrite = v;
       return Population;
     }
 

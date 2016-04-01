@@ -1,4 +1,6 @@
-var Population = require('./__Population/Population');
+var Population = require('./__Population/Population')
+  , fs = require('fs')
+  , JSONStream = require('JSONStream')
 
 module.exports = (function(){
   function CreateGenome(){
@@ -7,8 +9,33 @@ module.exports = (function(){
       , _isRunning = false
       , _generation = 0
       , _match = false
-      , _mutation = 0.1
+      , _mutation = 0.5
       , _time = null
+      , _memoryRead = fs.createReadStream('Genome/__Memory/Memory.json',{autoClose:false})
+      , _memoryWrite = fs.createWriteStream('Genome/__Memory/Memory.json',{autoClose:false})
+      , _testCount = 0;
+
+    _memoryRead.pipe(JSONStream.parse('*'))
+
+    _memoryRead.extendedOnData = [];
+    _memoryRead.extendedOnEnd = [];
+
+    _memoryRead.on('data',function(d){
+      if(_memoryRead.extendedOnData)
+      {
+        _memoryRead.extendedOnData.forEach(function(k,i){
+          k(d);
+        });
+      }
+    });
+    _memoryRead.on('end',function(){
+      if(_memoryRead.extendedOnEnd)
+      {
+        _memoryRead.extendedOnEnd.forEach(function(k,i){
+          k();
+        });
+      }
+    });
 
     function Genome(str){
       if(_time !== null)
@@ -23,20 +50,25 @@ module.exports = (function(){
       .amount(_pop)
       .mutationRate(_mutation)
       .onFound(function(){_match = true;})
-      .onUpdate(function(p){
-        console.log('Generation: ',_generation);
-        for(var i=0;i<p.length;i+=1)
-        {
-          console.log('Str: ',p[i].map(), 'Length: ',p[i].map().length);
-        }
-        console.log('');
-        console.log('');
-      })
+      .memoryRead(_memoryRead)
+      .memoryWrite(_memoryWrite)
+      .onUpdate(Genome.log)
       .call();
 
       _generation += 1;
-      console.log('str',str);
-      _time = setTimeout(function(){if(!_match){Genome.call({},str);}else{_isRunning = false;}},0);
+
+      _testCount++;
+      _time = setTimeout(function(){
+        if(!_match)
+        {
+          Genome.call({},str);
+        }
+        else
+        {
+          _isRunning = false;
+          Genome.log(_Population.members(),'Found Match!!!!!')
+        }
+      },0);
     };
 
     Genome.pop = function(v)
@@ -72,6 +104,22 @@ module.exports = (function(){
     Genome.generation = function(v)
     {
       return _generation;
+    }
+
+    Genome.log = function(p,m){
+      if(_testCount >= 100 || m)
+      {
+        if(m) console.log(m);
+        console.log('Generation: ',_generation);
+        for(var i=0;i<p.length;i+=1)
+        {
+          console.log('String: ',p[i].map(),' (',p[i].status(),')');
+        }
+        console.log('');
+        console.log('');
+        _testCount = 0;
+      }
+
     }
 
     return Genome;
