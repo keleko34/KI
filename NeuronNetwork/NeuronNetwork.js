@@ -52,17 +52,15 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
     {
       return (1/(1+Math.exp(netInp / this.activationResponse)))
     }, //get sigmoid
-    getActivation:function(layer,weights)
+    getActivation:function(inputs,weights)
     {
       var sum = 0,
-          x = 0;
-      for(x;x<inputs.length;x+=1)
+          x = 0,
+          cWeight = 0;
+      for(x;x<(weights.length);x+=1)
       {
-        if(weights[x] === undefined)
-        {
-          weights[x] = getRandomValue(-1,1);
-        }
-        sum += (inputs[x] * weights[x]);
+        sum += (inputs[cWeight] * weights[x]);
+        cWeight += 1;
       }
       return sum;
     }, //get activation value from layer nodes and weights
@@ -109,7 +107,6 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
     update:function(Nuerons)
     {
       var outputs = []
-        , cWeight = 0
         , x = 0
         , i = 0
         , k = 0
@@ -129,17 +126,12 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
         }
 
         outputs = [];
-        cWeight = 0;
         nLayer = this.layers[x].NeuronLayer;
         for(i;i<nLayer.neurons.length;i+=1)
         {
           netInput = 0;
           ncWeights = nLayer.neurons[i].weights;
-          for(k;k<(ncWeights.length);k+=1)
-          {
-            netInput += (Nuerons[cWeight] * ncWeights[k]);
-            cWeight += 1;
-          }
+          netInput = this.getActivation(Nuerons,ncWeights);
           netInput += (nLayer.bias * this.bias);
           outputs.push(this.Sigmoid(netInput));
           currentWeight = 0;
