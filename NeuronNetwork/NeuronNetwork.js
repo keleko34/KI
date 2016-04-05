@@ -109,10 +109,11 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
     update:function(Nuerons)
     {
       var outputs = []
-        , currentWeight = 0
+        , cWeight = 0
         , x = 0
         , i = 0
         , k = 0
+        , nLayer
         , currentWeights = 0
         , netInput = 0;
       if(Nuerons.length != this.numInputs)
@@ -120,27 +121,26 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
         return outputs;
       }
 
-      for(x;x<this.numHiddenLayers;x+=1)
+      for(x;x<(this.numHiddenLayers+1);x+=1)
       {
-        if(i > 0)
+        if(x > 0)
         {
           Nuerons = outputs;
         }
 
         outputs = [];
-        currentWeight = 0;
-
-        for(i;i<this.layers[x].nuerons.length;i+=1)
+        cWeight = 0;
+        nLayer = this.layers[x].NeuronLayer;
+        for(i;i<nLayer.neurons.length;i+=1)
         {
           netInput = 0;
-          currentWeights = this.layers[x].nuerons[i].weights;
-          for(k;k<(currentWeights.length - 1);k+=1)
+          ncWeights = nLayer.neurons[i].weights;
+          for(k;k<(ncWeights.length);k+=1)
           {
-            netInput += (input[currentWeight] * currentWeights[k]);
-            currentWeight += 1;
+            netInput += (Nuerons[cWeight] * ncWeights[k]);
+            cWeight += 1;
           }
-          netInput += (currentWeights[currentWeights.length-1] * this.bias);
-
+          netInput += (nLayer.bias * this.bias);
           outputs.push(this.Sigmoid(netInput));
           currentWeight = 0;
         }
