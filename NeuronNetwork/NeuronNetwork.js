@@ -70,12 +70,18 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
     {
       var weights = []
         , x = 0
-        , i = 0;
+        , i = 0
+        , k = 0
+        , nLayer;
       for(x;x<(this.layers.length-1);x+=1)
       {
-        for(i;i<this.layers[x].weights.length;i+=1)
+        nLayer = this.layers[x].NeuronLayer.neurons;
+        for(i;i<nLayer.length;i+=1)
         {
-          weights.push(this.layers[x].weights[i]);
+          for(k;k<nLayer[i].weights.length;k+=1)
+          {
+            weights.push(nLayer[i].weights[k]);
+          }
         }
       }
       return weights;
@@ -84,13 +90,19 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
     {
       var x = 0
         , i = 0
+        , k = 0
+        , nLayer
         , weight = 0;
       for(x;x<(this.layers.length-1);x+=1)
       {
-        for(i;i<this.layers[x].weights.length;i+=1)
+        nLayer = this.layers[x].NeuronLayer.neurons;
+        for(i;i<nLayer.length;i+=1)
         {
-          this.layers[x].weights[i] = weights[weight];
-          weight += 1;
+          for(k;k<nLayer[i].weights.length;k+=1)
+          {
+            nLayer[i].weights[k] = weights[weight];
+            weight += 1;
+          }
         }
       }
     }, //return new values in weights array back into network
