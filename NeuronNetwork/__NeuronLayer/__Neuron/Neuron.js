@@ -1,8 +1,8 @@
-module.exports = function CreateNueron(n)
+module.exports = function CreateNeuron(n)
 {
-  function Nueron(n)
+  function Neuron(n)
   {
-    this.numWeights = (typeof n === 'number' || !isNaN(parseInt(n,10)) ? parseInt(n,10)+1 : 1); // +1 bias
+    this.numWeights = (typeof n === 'number' || !isNaN(parseInt(n,10)) ? parseInt(n,10) : 1);
     this.weights = [];
 
     var x =0;
@@ -12,12 +12,12 @@ module.exports = function CreateNueron(n)
     }
   };
 
-  Nueron.prototype = {
+  Neuron.prototype = {
     RandomWeight:function()
     {
       return Math.random()*(1-(-1)+1)+(-1);
     }
   };
 
-  return new Nueron(n);
+  return new Neuron(n);
 }

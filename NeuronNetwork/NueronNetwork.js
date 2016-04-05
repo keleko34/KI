@@ -1,5 +1,3 @@
-var CreateNueronLayer = require('./__NueronLayer/NueronLayer');
-
 module.exports = function CreateNeuronNetwork(i,h,nh,o)
 {
   function NeuronNetwork(i,h,nh,o) //i: number of inputs, nh: number of hidden layers, h: nuerons per hidden layer, o: number of outputs
@@ -12,25 +10,26 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
     this.bias = 0;
     this.layers = [];
 
-    var x=0;
     if(this.numHiddenLayers > 0)
     {
-      this.layers.push(CreateNueronLayer(this.neuronsPerHiddenLayer,this.numInputs));
-      for(x;x<this.numHiddenLayers;x+=1)
+      this.layers.push(this.CreateInputLayer(this.neuronsPerHiddenLayer,this.numInputs,this.RandomWeight()));
+      for(var x=0;x<this.numHiddenLayers;x+=1)
       {
-        this.layers.push(CreateNueronLayer(this.neuronsPerHiddenLayer,this.neuronsPerHiddenLayer));
+        this.layers.push(this.CreateHiddenLayer(this.neuronsPerHiddenLayer,this.neuronsPerHiddenLayer,this.RandomWeight()));
       }
-      this.layers.push(CreateNueronLayer(this.numOutputs,this.neuronsPerHiddenLayer));
+      this.layers.push(this.CreateOutputLayer(this.numOutputs,this.neuronsPerHiddenLayer));
     }
     else
     {
-      this.layers.push(CreateNueronLayer(this.numOutputs,this.numInputs));
+      this.layers.push(this.CreateOutputLayer(this.numOutputs,this.numInputs,this.RandomWeight()));
     }
 
   }
 
   NeuronNetwork.prototype = {
-    CreateNueronLayer:CreateNueronLayer,
+    CreateInputLayer:require('./__Inputs/Inputs'),
+    CreateHiddenLayer:require('./__Hidden/Hidden'),
+    CreateOutputLayer:require('./__Outputs/Outputs'),
     RandomWeight:function()
     {
       return Math.random()*(1-(-1)+1)+(-1);
@@ -78,7 +77,7 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
         }
       }
       return weights;
-    },
+    }, //get all weights into single array
     putWeights:function(weights)
     {
       var x = 0
@@ -92,7 +91,48 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
           weight += 1;
         }
       }
+    }, //return new values in weights array back into network
+    update:function(Nuerons)
+    {
+      var outputs = []
+        , currentWeight = 0
+        , x = 0
+        , i = 0
+        , k = 0
+        , currentWeights = 0
+        , netInput = 0;
+      if(Nuerons.length != this.numInputs)
+      {
+        return outputs;
+      }
+
+      for(x;x<this.numHiddenLayers;x+=1)
+      {
+        if(i > 0)
+        {
+          Nuerons = outputs;
+        }
+
+        outputs = [];
+        currentWeight = 0;
+
+        for(i;i<this.layers[x].nuerons.length;i+=1)
+        {
+          netInput = 0;
+          currentWeights = this.layers[x].nuerons[i].weights;
+          for(k;k<(currentWeights.length - 1);k+=1)
+          {
+            netInput += (input[currentWeight] * currentWeights[k]);\
+            currentWeight += 1;
+          }
+          netInput += (currentWeights[currentWeights.length-1] * this.bias);
+
+          outputs.push(this.Sigmoid(netInput));
+          currentWeight = 0;
+        }
+      }
     }
+    return outputs;
   };
 
 
