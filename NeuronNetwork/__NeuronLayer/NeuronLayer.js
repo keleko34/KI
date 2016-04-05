@@ -1,4 +1,4 @@
-module.exports = function CreateNeuronLayer(n)
+module.exports = function CreateNeuronLayer(n,nw)
 {
   function NeuronLayer(n,nw)
   {
@@ -16,5 +16,5 @@ module.exports = function CreateNeuronLayer(n)
     CreateNeuron:require('./__Neuron/Neuron')
   };
 
-  return new NeuronLayer(n);
+  return new NeuronLayer(n,nw);
 }

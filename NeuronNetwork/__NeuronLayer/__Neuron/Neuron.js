@@ -2,7 +2,7 @@ module.exports = function CreateNeuron(n)
 {
   function Neuron(n)
   {
-    this.numWeights = (typeof n === 'number' || !isNaN(parseInt(n,10)) ? parseInt(n,10) : 1);
+    this.numWeights = (typeof n === 'number' ? n : 1);
     this.weights = [];
 
     var x =0;
@@ -15,7 +15,7 @@ module.exports = function CreateNeuron(n)
   Neuron.prototype = {
     RandomWeight:function()
     {
-      return Math.random()*(1-(-1)+1)+(-1);
+      return Math.random()*(1-(-1))+(-1);
     }
   };
 

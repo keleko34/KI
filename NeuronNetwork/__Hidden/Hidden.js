@@ -1,4 +1,4 @@
-module.exports = function CreateHiddenLayer(n)
+module.exports = function CreateHiddenLayer(n,nw,bias)
 {
   function HiddenLayer(n,nw,bias)
   {
@@ -10,5 +10,5 @@ module.exports = function CreateHiddenLayer(n)
     CreateNeuronLayer:require('./../__NeuronLayer/NeuronLayer')
   };
 
-  return new HiddenLayer(n);
+  return new HiddenLayer(n,nw,bias);
 }

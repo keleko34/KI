@@ -1,3 +1,5 @@
+/*
+
 var genome = require('./Genome/Genome');
 
 var sampleTests = {
@@ -7,3 +9,14 @@ var sampleTests = {
 }
 
 genome().call({},sampleTests[process.argv[2]] !== undefined ? sampleTests[process.argv[2]] : sampleTests.easy);
+
+
+*/
+
+var NeuronNetwork = require('./NeuronNetwork/NeuronNetwork');
+
+var test = NeuronNetwork(2,2,2,2).CreateNeuralNetwork();
+test.forEach(function(k,i){
+  console.log(k);
+  console.log(k.NeuronLayer.neurons);
+});

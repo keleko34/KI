@@ -1,4 +1,4 @@
-module.exports = function CreateInputsLayer(n)
+module.exports = function CreateInputsLayer(n,nw,bias)
 {
   function InputsLayer(n,nw,bias)
   {
@@ -10,5 +10,5 @@ module.exports = function CreateInputsLayer(n)
     CreateNeuronLayer:require('./../__NeuronLayer/NeuronLayer')
   };
 
-  return new InputsLayer(n);
+  return new InputsLayer(n,nw,bias);
 }

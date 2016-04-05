@@ -2,37 +2,39 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
 {
   function NeuronNetwork(i,h,nh,o) //i: number of inputs, nh: number of hidden layers, h: nuerons per hidden layer, o: number of outputs
   {
-    this.numInputs = (typeof i === 'number' || !isNaN(parseInt(i,10)) ? parseInt(i,10) : 1);
-    this.numHiddenLayers = (typeof h === 'number' || !isNaN(parseInt(h,10)) ? parseInt(h,10) : 1);
-    this.neuronsPerHiddenLayer = (typeof nh === 'number' || !isNaN(parseInt(nh,10)) ? parseInt(nh,10) : 2);
-    this.numOutputs = (typeof o === 'number' || !isNaN(parseInt(o,10)) ? parseInt(o,10) : 1);
+    this.numInputs = (typeof i === 'number' ? i : 1);
+    this.numHiddenLayers = (typeof h === 'number' ? h : 1);
+    this.neuronsPerHiddenLayer = (typeof nh === 'number' ? nh : 2);
+    this.numOutputs = (typeof o === 'number' ? o : 1);
     this.activationResponse = 0;
     this.bias = 0;
     this.layers = [];
-
-    if(this.numHiddenLayers > 0)
-    {
-      this.layers.push(this.CreateInputLayer(this.neuronsPerHiddenLayer,this.numInputs,this.RandomWeight()));
-      for(var x=0;x<this.numHiddenLayers;x+=1)
-      {
-        this.layers.push(this.CreateHiddenLayer(this.neuronsPerHiddenLayer,this.neuronsPerHiddenLayer,this.RandomWeight()));
-      }
-      this.layers.push(this.CreateOutputLayer(this.numOutputs,this.neuronsPerHiddenLayer));
-    }
-    else
-    {
-      this.layers.push(this.CreateOutputLayer(this.numOutputs,this.numInputs,this.RandomWeight()));
-    }
-
   }
 
   NeuronNetwork.prototype = {
     CreateInputLayer:require('./__Inputs/Inputs'),
     CreateHiddenLayer:require('./__Hidden/Hidden'),
     CreateOutputLayer:require('./__Outputs/Outputs'),
+    CreateNeuralNetwork:function()
+    {
+      if(this.numHiddenLayers > 0)
+      {
+        this.layers.push(this.CreateInputLayer(this.neuronsPerHiddenLayer,this.numInputs,this.RandomWeight()));
+        for(var x=0;x<this.numHiddenLayers;x+=1)
+        {
+          this.layers.push(this.CreateHiddenLayer(this.neuronsPerHiddenLayer,this.neuronsPerHiddenLayer,this.RandomWeight()));
+        }
+        this.layers.push(this.CreateOutputLayer(this.numOutputs,this.neuronsPerHiddenLayer));
+      }
+      else
+      {
+        this.layers.push(this.CreateOutputLayer(this.numOutputs,this.numInputs,this.RandomWeight()));
+      }
+      return this.layers;
+    },
     RandomWeight:function()
     {
-      return Math.random()*(1-(-1)+1)+(-1);
+      return (Math.random()*(1-(-1))+(-1));
     }, //gives random weight between -1,0,1;
     RandomNum:function(min,max)
     {
@@ -122,7 +124,7 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
           currentWeights = this.layers[x].nuerons[i].weights;
           for(k;k<(currentWeights.length - 1);k+=1)
           {
-            netInput += (input[currentWeight] * currentWeights[k]);\
+            netInput += (input[currentWeight] * currentWeights[k]);
             currentWeight += 1;
           }
           netInput += (currentWeights[currentWeights.length-1] * this.bias);
@@ -131,8 +133,8 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
           currentWeight = 0;
         }
       }
+      return outputs;
     }
-    return outputs;
   };
 
 

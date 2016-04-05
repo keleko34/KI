@@ -1,8 +1,7 @@
-module.exports = function CreateOutputsLayer(n)
+module.exports = function CreateOutputsLayer(n,nw)
 {
-  function OutputsLayer(n,nw,bias)
+  function OutputsLayer(n,nw)
   {
-    this.bias = bias;
     this.NeuronLayer = this.CreateNeuronLayer(n,nw);
   };
 
@@ -10,5 +9,5 @@ module.exports = function CreateOutputsLayer(n)
     CreateNeuronLayer:require('./../__NeuronLayer/NeuronLayer')
   };
 
-  return new OutputsLayer(n);
+  return new OutputsLayer(n,nw);
 }
