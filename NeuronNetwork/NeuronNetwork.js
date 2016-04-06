@@ -50,7 +50,8 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
     }, //converts NN encoded Char to JS Char Code
     Sigmoid:function(netInp)
     {
-      return (1/(1+Math.exp(netInp / this.activationResponse)))
+      //console.log("inside sig: ",netInp,this.activationResponse,(1/(1+Math.pow(Math.E,-netInp))),(1/(1+Math.exp(-netInp))));
+      return (1/(1+Math.exp(-netInp)));
     }, //get sigmoid
     getActivation:function(inputs,weights)
     {
@@ -104,7 +105,7 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
         }
       }
     }, //return new values in weights array back into network
-    update:function(Nuerons)
+    update:function(Neurons)
     {
       var outputs = []
         , x = 0
@@ -113,7 +114,7 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
         , nLayer
         , currentWeights = 0
         , netInput = 0;
-      if(Nuerons.length != this.numInputs)
+      if(Neurons.length != this.numInputs)
       {
         return outputs;
       }
@@ -122,16 +123,17 @@ module.exports = function CreateNeuronNetwork(i,h,nh,o)
       {
         if(x > 0)
         {
-          Nuerons = outputs;
+          Neurons = outputs;
         }
 
         outputs = [];
-        nLayer = this.layers[x].NeuronLayer;
-        for(i;i<nLayer.neurons.length;i+=1)
+        nLayer = this.layers[x];
+        i = 0;
+        for(i;i<nLayer.NeuronLayer.neurons.length;i+=1)
         {
           netInput = 0;
-          ncWeights = nLayer.neurons[i].weights;
-          netInput = this.getActivation(Nuerons,ncWeights);
+          ncWeights = nLayer.NeuronLayer.neurons[i].weights;
+          netInput = this.getActivation(Neurons,ncWeights);
           netInput += (nLayer.bias * this.bias);
           outputs.push(this.Sigmoid(netInput));
           currentWeight = 0;

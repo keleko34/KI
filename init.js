@@ -15,12 +15,12 @@ genome().call({},sampleTests[process.argv[2]] !== undefined ? sampleTests[proces
 
 var NeuronNetwork = require('./NeuronNetwork/NeuronNetwork');
 
-var test = NeuronNetwork(2,2,2,2);
+var test = NeuronNetwork(4,2,4,2);
 var nn = test.CreateNeuralNetwork();
 nn.forEach(function(k,i){
   console.log(k);
   console.log(k.NeuronLayer.neurons);
 });
 
-var update = test.update([-1.275,1.275]);
+var update = test.update([-1.275,1.275,1.275,1.275]);
 console.log("updated: ",update);
