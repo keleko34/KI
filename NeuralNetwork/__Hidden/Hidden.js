@@ -23,7 +23,7 @@ module.exports = function()
           lWeights.push(HiddenLayer.randomWeight());
         }
         _transfer_weights = _transfer_weights.concat(lWeights);
-        _hidden_layers[x][i] = {Output:null,TransferWeights:lWeights};
+        _hidden_layers[x][i] = {Output:null,TransferWeights:lWeights,Bias:0};
       }
     }
     return _hidden_layers;

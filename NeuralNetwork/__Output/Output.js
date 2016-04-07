@@ -17,7 +17,7 @@ module.exports = function()
         lWeights.push(OutputLayer.randomWeight());
       }
       _transfer_weights = _transfer_weights.concat(lWeights);
-      _output_layer[i] = {Output:null,TransferWeights:lWeights};
+      _output_layer[i] = {Output:null,TransferWeights:lWeights,Bias:0};
     }
     return _output_layer;
   }

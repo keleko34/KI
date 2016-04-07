@@ -16,13 +16,18 @@ module.exports = function()
   function CharFitness()
   {
     _fitness = [];
+    var caseFitness = {};
     if(!_neuralNetwork)
     {
       CharFitness.createOrUpdateNeuralNetwork();
     }
     for(var x=0;x<_cases.length;x+=1)
     {
-      CharFitness.runCase(_cases[x]);
+      caseFitness = CharFitness.runCase(_cases[x]);
+      _fitness.push(caseFitness);
+      // possible update case ?
+      _cases[x][0][0] = caseFitness.output.outputValue.nnChar;
+      _cases[x][1][(_cases[x][1].length-1)] = CharFitness.getDiff(caseFitness.output.goalValue.charCode,caseFitness.output.outputValue.charCode);
     }
     return _fitness;
   }
@@ -104,7 +109,7 @@ module.exports = function()
 
   CharFitness.getCharFitness = function(output_value,goal_value)
   {
-    return ((CharFitness.convertInputToChar(output_value) - CharFitness.convertInputToChar(goal_value)) * (CharFitness.convertInputToChar(output_value) - CharFitness.convertInputToChar(goal_value)));
+    return ((CharFitness.convertInputToCharCode(output_value) - CharFitness.convertInputToCharCode(goal_value)) * (CharFitness.convertInputToCharCode(output_value) - CharFitness.convertInputToCharCode(goal_value)));
   }
 
   CharFitness.getDiff = function(goal_value,input_value)
@@ -190,7 +195,7 @@ module.exports = function()
 
   CharFitness.runCase = function(single_case)
   {
-    _fitness.push({
+    var currentFitness = {
       output:
       {
         outputDiff:
@@ -224,9 +229,8 @@ module.exports = function()
       PowMean:0,
       CharTotal:0,
       CharMean:0
-    });
-    var output = _neuralNetworkLib.update(single_case[0]).output()
-      , currentFitness = _fitness[(_fitness.length-1)];
+    }
+      , output = _neuralNetworkLib.update(single_case[0]).output();
     for (var x=0; x < output.length; x+=1)
     {
       currentFitness.Pow.push(CharFitness.getPowerFitness(output[x],single_case[1][x]));

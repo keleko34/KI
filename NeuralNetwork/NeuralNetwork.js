@@ -139,7 +139,7 @@ module.exports = function()
     _output = [];
     for(x;x<input_values.length;x+=1)
     {
-      _neural_network[0][i].Output = input_values[i];
+      _neural_network[0][x].Output = input_values[x];
     }
     for(x=1;x<_neural_network.length;x+=1)
     {
