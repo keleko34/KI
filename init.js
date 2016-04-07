@@ -13,14 +13,9 @@ genome().call({},sampleTests[process.argv[2]] !== undefined ? sampleTests[proces
 
 */
 
-var NeuronNetwork = require('./NeuronNetwork/NeuronNetwork');
+var CharFitness = require('./CharFitness/CharFitness')();
+CharFitness.addCase(37,72);
 
-var test = NeuronNetwork(4,2,4,2);
-var nn = test.CreateNeuralNetwork();
-nn.forEach(function(k,i){
-  console.log(k);
-  console.log(k.NeuronLayer.neurons);
-});
-
-var update = test.update([-1.275,1.275,1.275,1.275]);
-console.log("updated: ",update);
+var fitness = CharFitness();
+console.log("Fitness: ",fitness[0]);
+console.log("Output: ",fitness[0].output);

@@ -16,7 +16,7 @@ module.exports = function()
       {
         lWeights.push(OutputLayer.randomWeight());
       }
-      _transfer_weights = _transfer_weights.concat(lWeights); //is memory refrenced for easy changing
+      _transfer_weights = _transfer_weights.concat(lWeights);
       _output_layer[i] = {Output:null,TransferWeights:lWeights};
     }
     return _output_layer;
@@ -62,7 +62,27 @@ module.exports = function()
     return _transfer_weights;
   }
 
-  HiddenLayer.randomWeight()
+  OutputLayer.putWeights = function(weights)
+  {
+    var cWeight = 0;
+    ol:for(var x=0;x<_output_layer.length;x+=1)
+    {
+      on:for(var i=0;i<_output_layer[x].TransferWeights.length;i+=1)
+      {
+        if(weights[cWeight] !== undefined)
+        {
+          _output_layer[x].TransferWeights[i] = weights[cWeight];
+          cWeight += 1;
+        }
+        else
+        {
+          break ol;
+        }
+      }
+    }
+  }
+
+  OutputLayer.randomWeight = function()
   {
     return (Math.random()*(_weight_ratio-(-_weight_ratio))+(-_weight_ratio));
   }

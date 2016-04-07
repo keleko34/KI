@@ -10,6 +10,7 @@ module.exports = function()
     , _num_hidden_neurons = 3
     , _num_output_neurons = 1
     , _output = []
+    , _input_values = []
     , _input_layer = Input()
     , _hidden_layer = Hidden()
     , _output_layer = Output()
@@ -94,12 +95,32 @@ module.exports = function()
     return _neural_network;
   }
 
+  NeuralNetwork.inputLayer = function()
+  {
+    return _input_layer;
+  }
+
+  NeuralNetwork.hiddenLayer = function()
+  {
+    return _hidden_layer;
+  }
+
+  NeuralNetwork.outputLayer = function()
+  {
+    return _output_layer;
+  }
+
+  NeuralNetwork.inputValues = function()
+  {
+    return _input_values;
+  }
+
   NeuralNetwork.activation = function(previous_layer,hidden_or_output_neuron)
   {
     hidden_or_output_neuron.Output = hidden_or_output_neuron.Bias; //adds bias
 	for (var x = 0; x < previous_layer.length; x++) //computes sigma layers
     {
-      hidden_or_output_neuron.Output += previous_layer[n].Output * hidden_or_output_neuron.TransferWeights[n];
+      hidden_or_output_neuron.Output += previous_layer[x].Output * hidden_or_output_neuron.TransferWeights[x];
     }
     return NeuralNetwork;
   }
@@ -114,7 +135,7 @@ module.exports = function()
   {
     var x = 0
       , i = 0;
-
+    _input_values = input_values;
     _output = [];
     for(x;x<input_values.length;x+=1)
     {
@@ -138,6 +159,58 @@ module.exports = function()
   NeuralNetwork.randomWeight = function()
   {
     return (Math.random()*(_weight_ratio-(-_weight_ratio))+(-_weight_ratio));
+  }
+
+  NeuralNetwork.getWeights = function()
+  {
+    return _hidden_layer.transferWeights().concat(_output_layer.transferWeights());
+  }
+
+  NeuralNetwork.putWeights = function(weights)
+  {
+    var cWeight = 0;
+    nl:for(var x=1;x<_neural_network.length;x+=1)
+    {
+      nn:for(var i=0;i<_neural_network[x].length;i+=1)
+      {
+        tw:for(var k=0;k<_neural_network[x][i].TransferWeights.length;k+=1)
+        {
+          if(weights[cWeight] !== undefined)
+          {
+            _neural_network[x][i].TransferWeights[k] = weights[cWeight];
+            cWeight += 1;
+          }
+          else
+          {
+            break nl;
+          }
+        }
+      }
+    }
+    return NeuralNetwork;
+  }
+
+  NeuralNetwork.randomizeWeights = function()
+  {
+    var weights = NeuralNetwork.getWeights();
+    for(var x=0;x<weights.length;x+=1)
+    {
+      weights[x] = NeuralNetwork.randomWeight();
+    }
+    NeuralNetwork.putWeights(weights);
+    return NeuralNetwork;
+  }
+
+  NeuralNetwork.updateAllReturnOutput = function(weights,input_values)
+  {
+    if(weights === undefined)
+    {
+      return [];
+    }
+    _input_values = (input_values !== undefined ? input_values : _input_values);
+    NeuralNetwork.putWeights(weights);
+    NeuralNetwork.update(_input_values);
+    return _output;
   }
 
   return NeuralNetwork;
