@@ -175,6 +175,7 @@ module.exports = function()
       {
         tw:for(var k=0;k<_neural_network[x][i].TransferWeights.length;k+=1)
         {
+          console.log(cWeight,weights[cWeight],_neural_network[x][i].TransferWeights[k]);
           if(weights[cWeight] !== undefined)
           {
             _neural_network[x][i].TransferWeights[k] = weights[cWeight];
@@ -198,6 +199,7 @@ module.exports = function()
       weights[x] = NeuralNetwork.randomWeight();
     }
     NeuralNetwork.putWeights(weights);
+    //console.log(weights,NeuralNetwork.getWeights());
     return NeuralNetwork;
   }
 

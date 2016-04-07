@@ -14,8 +14,25 @@ genome().call({},sampleTests[process.argv[2]] !== undefined ? sampleTests[proces
 */
 
 var CharFitness = require('./CharFitness/CharFitness')();
+  var bestPowFitness = Infinity;
+  var bestCharFitness = Infinity;
 CharFitness.addCase(37,72);
 
-var fitness = CharFitness();
-console.log("Fitness: ",fitness[0]);
-console.log("Output: ",fitness[0].output);
+function runFitness()
+{
+  var fitness = CharFitness();
+  if(bestPowFitness > fitness[0].PowTotal)
+  {
+    bestPowFitness = fitness[0].PowTotal;
+  }
+  if(bestCharFitness > fitness[0].CharTotal)
+  {
+    bestCharFitness = fitness[0].CharTotal;
+  }
+  console.log("Best Pow: ",bestPowFitness," Best Char: ",bestCharFitness);
+  CharFitness.randomWeights();
+  setTimeout(function(){
+    runFitness();
+  },100);
+}
+runFitness();
