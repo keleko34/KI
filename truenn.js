@@ -46,11 +46,13 @@ function Output_Neuron (Number_Of_Neurons_In_Previous_Layer) {
 
 //Runnning sprint
 function Transfer (Hidden_Or_Output_Neuron, Previous_Layer) {
-	Hidden_Or_Output_Neuron.Output = Hidden_Or_Output_Neuron.Bias;
-	for (var n = 0; n < Previous_Layer.length; n++)
-		Hidden_Or_Output_Neuron.Output += Previous_Layer[n].Output * Hidden_Or_Output_Neuron.Input_Transfer_Weights[n];
+	Hidden_Or_Output_Neuron.Output = Hidden_Or_Output_Neuron.Bias; //adds bias
+	for (var n = 0; n < Previous_Layer.length; n++) //computes sigma layers
+    {
+      Hidden_Or_Output_Neuron.Output += Previous_Layer[n].Output * Hidden_Or_Output_Neuron.Input_Transfer_Weights[n];
+    }
 };
-function Activate (Hidden_Or_Output_Neuron) {
+function Activate (Hidden_Or_Output_Neuron) { //sigmoid output of layer
 	Hidden_Or_Output_Neuron.Output = 1 / (1 + Math.exp(-Hidden_Or_Output_Neuron.Output));
 };
 function Run (nn, Input_Values) {
@@ -109,6 +111,31 @@ var convertToInput = function(c)
   return (((c/100)).toFixed(2)/1);
 }
 
+var getFitnessPow = function(o,c)
+{
+  return Math.pow(o - c, 2);
+}
+
+var getFitnessChar = function(o,c)
+{
+  return ((convertToChar(o) - convertToChar(c)) * (convertToChar(o) - convertToChar(c)));
+}
+
+var getDiff = function(goal,actual)
+{
+  return (goal > actual ? (goal - actual) : (actual - goal));
+}
+
+var convertDiffToActual = function(actual,goal,diff)
+{
+  return (goal > actual ? (actual+diff) : (actual-diff));
+}
+
+var randomChar = function()
+{
+  return Math.floor(Math.random()*(255-(0)+1)+(0));
+}
+
 var xor = [
 	[[0, 0], [0]],
 	[[0, 1], [1]],
@@ -117,11 +144,26 @@ var xor = [
 ];
 var charCheck = [
   [Array.apply(null, Array(256)).map(function(k,i){return ((((i)/100)).toFixed(2)/1)}),[convertToInput(72)]],
-  [Array.apply(null, Array(256)).map(function(k,i){return ((((i)/100)).toFixed(2)/1)}),[convertToInput(72),convertToInput(69),convertToInput(76),convertToInput(76),convertToInput(76)]]
+  [Array.apply(null, Array(256)).map(function(k,i){return ((((i)/100)).toFixed(2)/1)}),[convertToInput(72),convertToInput(69),convertToInput(76),convertToInput(76),convertToInput(79)]]
 ];
+
+//how it works, [0][0] = current Char, [0][1] = goal Char [1][0] = the difference needed for [0] === [1]
+var hello = [72,69,76,76,79];
+var test = [randomChar(),randomChar(),randomChar(),randomChar(),randomChar()]
+var charCheck2 = [];
+
+hello.forEach(function(k,i){
+  charCheck2.push([[convertToInput(test[i]),convertToInput(k)],[convertToInput(getDiff(k,test[i]))]]);
+});
+
 var nn = Neural_Network(2, 1, 3, 1);
 var n = Neural_Network(256,1,256,1);
 var nh = Neural_Network(256,1,256,5);
+
+var expn = Neural_Network(256,2,26,5);
+
+var smexpn = Neural_Network(2,1,3,1);
+
 Neural_Network_Fitness(nn, xor);
 
 var getWeights = function(nn)
@@ -169,7 +211,7 @@ var randomizeWeights = function(weights,n)
   }
 }
 
-var updateNN = function(nn,n)
+var randomuUpdateNN = function(nn,n)
 {
   var w = getWeights(nn);
   randomizeWeights(w,n);
@@ -180,18 +222,105 @@ var updateNN = function(nn,n)
 var FitnessSingleCase = function(nn,c)
 {
   var output = Run(nn, c[0]);
-		var output_error = 0;
-        var closest = 0;
-		for (var o = 0; o < output.length; o++)
-        {
-          output_error += Math.pow(((output[o].toFixed(2))/1) - c[1][o], 2);
-        }
-		return [c[1][0],convertToChar(c[1][0]),String.fromCharCode(convertToChar(c[1][0])),(output_error / output.length),output[0],convertToChar(output[0]),String.fromCharCode(convertToChar(output[0])),((convertToChar(output[0]) - convertToChar(c[1][0])) * (convertToChar(output[0]) - convertToChar(c[1][0]))),output];
+  var Fitness = {
+    Pow:[],
+    Char:[],
+    PowTotal:0,
+    PowMean:0,
+    CharTotal:0,
+    CharMean:0
+  };
+  for (var o = 0; o < output.length; o++)
+  {
+
+    Fitness.Pow.push(getFitnessPow(output[o],c[1][o]));
+    Fitness.Char.push(getFitnessChar(output[o],c[1][o]));
+    Fitness.PowTotal += getFitnessPow(output[o],c[1][o]);
+    Fitness.CharTotal += getFitnessChar(output[o],c[1][o]);
+
+    console.log("Goal: ",c[1][o],convertToChar(c[1][o]),String.fromCharCode(convertToChar(c[1][o])));
+    console.log("Actual: ",(output[o]),convertToChar(output[o]),String.fromCharCode(convertToChar(output[o])));
+    console.log("Fitness: POW: ",getFitnessPow(output[o],c[1][o])," Char: ",getFitnessChar(output[o],c[1][o]));
+
+    output[o] = {
+      Actual:
+      {
+        nnChar:output[o],
+        charcode:convertToChar(output[o]),
+        char:String.fromCharCode(convertToChar(output[o]))
+      },
+      Goal:
+      {
+        nnChar:c[1][o],
+        charcode:convertToChar(c[1][o]),
+        char:String.fromCharCode(convertToChar(c[1][o]))
+      }
+    }
+  }
+  Fitness.PowMean = (Fitness.PowTotal/output.length);
+  Fitness.CharMean = (Fitness.CharTotal/output.length);
+  return {output:output,Fitness:Fitness};
 }
 
-var randomFitnessRun = function(nn,n,c)
+var difFitnessSingleCase = function(nn,c)
 {
-  updateNN(nn,n);
+  var output = Run(nn, c[0]);
+  var Fitness = {
+    Pow:[],
+    Char:[],
+    PowTotal:0,
+    PowMean:0,
+    CharTotal:0,
+    CharMean:0
+  };
+  for (var o = 0; o < output.length; o++)
+  {
+
+    Fitness.Pow.push(getFitnessPow(output[o],c[1][o]));
+    Fitness.Char.push(getFitnessChar(output[o],c[1][o]));
+    Fitness.PowTotal += getFitnessPow(output[o],c[1][o]);
+    Fitness.CharTotal += getFitnessChar(output[o],c[1][o]);
+
+    console.log("Goal Diff: ",c[1][o],convertToChar(c[1][o]),String.fromCharCode(convertToChar(c[1][o])));
+    console.log("Actual Diff: ",(output[o]),convertToChar(output[o]),String.fromCharCode(convertToChar(output[o])));
+    console.log("Goal: ",c[0][1],convertToChar(c[0][1]),String.fromCharCode(convertToChar(c[0][1])));
+    console.log("Actual: ",convertDiffToActual(c[0][0],c[0][1],output[o]),convertToChar(convertDiffToActual(c[0][0],c[0][1],output[o])),String.fromCharCode(convertToChar(convertDiffToActual(c[0][0],c[0][1],output[o]))));
+    console.log("Fitness: POW: ",getFitnessPow(output[o],c[1][o])," Char: ",getFitnessChar(output[o],c[1][o]));
+
+    output[o] = {
+      Actual:
+      {
+        nnChar:output[o],
+        charcode:convertToChar(output[o]),
+        char:String.fromCharCode(convertToChar(output[o]))
+      },
+      Goal:
+      {
+        nnChar:c[1][o],
+        charcode:convertToChar(c[1][o]),
+        char:String.fromCharCode(convertToChar(c[1][o]))
+      }
+    }
+  }
+  Fitness.PowMean = (Fitness.PowTotal/output.length);
+  Fitness.CharMean = (Fitness.CharTotal/output.length);
+  return {output:output,Fitness:Fitness};
+}
+
+var diffMultiCase = function(nn,cs)
+{
+  var outputs = [];
+  for(var x=0;x<cs.length;x+=1)
+  {
+    console.log("Running: ",cs[x]);
+    outputs.push(difFitnessSingleCase(nn,cs[x]));
+  }
+  return outputs;
+}
+
+var randomSingleFitnessRun = function(nn,n,c)
+{
+  randomuUpdateNN(nn,n);
   return FitnessSingleCase(nn,c);
 }
 
