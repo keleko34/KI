@@ -21,6 +21,7 @@ module.exports = function()
     {
       CharFitness.createOrUpdateNeuralNetwork();
     }
+    _weights = _neuralNetworkLib.getWeights();
     for(var x=0;x<_cases.length;x+=1)
     {
       caseFitness = CharFitness.runCase(_cases[x]);
@@ -164,6 +165,7 @@ module.exports = function()
       [
         CharFitness.convertCharCodeToInput(diff)
       ]]);
+    return CharFitness;
   }
 
   CharFitness.createOrUpdateNeuralNetwork = function()
