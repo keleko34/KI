@@ -36,7 +36,12 @@ function matrix(arr)
     sigmoid:descriptor(matrix.sigmoid),
     nonlinear:descriptor(matrix.nonlinear),
     seed:descriptor(matrix.seed),
-    random:descriptor(matrix.random)
+    random:descriptor(matrix.random),
+    add:descriptor(matrix.add),
+    subtract:descriptor(matrix.subtract),
+    multiply:descriptor(matrix.multiply),
+    divide:descriptor(matrix.divide),
+    modulus:descriptor(matrix.modulus)
   });
   
   return _data;
@@ -52,6 +57,11 @@ matrix.sigmoid = require('./methods/sigmoid');
 matrix.nonlinear = require('./methods/nonlinear');
 matrix.seed = function(v){ Math.seedrandom(v);};
 matrix.random = require('./methods/random');
+matrix.add = require('./methods/add');
+matrix.subtract = require('./methods/subtract');
+matrix.multiply = require('./methods/multiply');
+matrix.divide = require('./methods/divide');
+matrix.modulus = require('./methods/modulus');
 
 (global || window).matrix = matrix;
 module.exports = matrix;

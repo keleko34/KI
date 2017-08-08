@@ -32,13 +32,14 @@ module.exports = function dot(matA,matB)
       _matB = this.transpose((matB || matA)),
       _shapeA = this.shape(_matA),
       _shapeB = this.shape(_matB),
-      _arr = matrix(_shapeA.x);
-  if(_shapeA.x === _shapeB.x && _shapeA.y === _shapeB.y)
+      _arr = matrix();
+  
+  if(_shapeA.y === _shapeB.y)
   {
     for(var x0=0,lenX0=_shapeA.x;x0<lenX0;x0++)
     {
-      _arr[x0] = this.vector(_shapeA.x);
-      for(var x1=0,lenX1=_shapeA.x;x1<lenX1;x1++)
+      _arr[x0] = this.vector(_shapeB.x);
+      for(var x1=0,lenX1=_shapeB.x;x1<lenX1;x1++)
       {
         _arr[x0][x1] = this.vector.dot(_matA[x0],_matB[x1]);
       }

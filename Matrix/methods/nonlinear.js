@@ -12,7 +12,7 @@ module.exports = function nonlinear(mat,n,derivative)
     
     for(var x=0,len=_mat.length;x<len;x++)
     {
-      _arr[x] = this.nonlinear(_mat[x],true);
+      _arr[x] = _mat[x].nonlinear(true);
     }
     
     return _arr;
